@@ -35,7 +35,11 @@ if not ((args.output_dir or args.source_dir) and args.po_dir):
   "--output-dir <SOURCE_DIR> --po-dir <PO_DIR>"''')
 
 log_level = getattr(logging, str.upper(args.v))
-logging.basicConfig(format='%(levelname)s: %(message)s', level=log_level)
+logging.basicConfig(format='%(levelname)s: %(message)s', level=log_level, filename='RimTranslate.log')
+console = logging.StreamHandler()
+console.setLevel(log_level)
+console.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
+logging.getLogger('').addHandler(console)
 
 # Add trailing slash for sure
 args.source_dir = os.path.join(args.source_dir, '')
@@ -82,7 +86,7 @@ def create_pot_file(filename):
     """Create POT file (only source strings exists) from given filename"""
     doc = etree.parse(filename)
     po = polib.POFile()
-    [undef, basefile] = filename.split(args.source_dir, 1)
+    basefile = filename.split(args.source_dir, 1)[1]
     po.metadata = {
         'Project-Id-Version': '1.0',
         'Report-Msgid-Bugs-To': 'you@example.com',
@@ -110,7 +114,7 @@ def create_pot_file(filename):
                         if len(label_node):
                             logging.debug("Element has children")
                             for child_node in label_node:
-                                [undef, path_label] = doc.getpath(child_node).split(doc.getpath(parent), 1)
+                                path_label = doc.getpath(child_node).split(doc.getpath(parent), 1)[1]
                                 path_label = generate_injdef_xml_tag(path_label)
                                 logging.debug("msgctxt: " + defName_node.text + path_label)
 
@@ -122,7 +126,7 @@ def create_pot_file(filename):
                                 po.append(entry)
                         else:
                             # Generate string for parenting
-                            [undef, path_label] = doc.getpath(label_node).split(doc.getpath(parent), 1)
+                            path_label = doc.getpath(label_node).split(doc.getpath(parent), 1)[1]
                             path_label = generate_injdef_xml_tag(path_label)
                             logging.debug("msgctxt: " + defName_node.text + path_label)
 
@@ -155,7 +159,7 @@ def create_translation_file(po_file):
 for root, dirs, files in os.walk(args.source_dir):
     for dir in dirs:
         full_filename = os.path.join(root, dir)
-        [undef, filedir] = full_filename.split(args.source_dir, 1)
+        filedir = full_filename.split(args.source_dir, 1)[1]
         # Create po directory structure
         po_full_filename = os.path.join(args.po_dir, filedir)
         if not(os.path.exists(po_full_filename)):
@@ -171,7 +175,7 @@ for root, dirs, files in os.walk(args.source_dir):
             full_filename = os.path.join(root, file)
             logging.info("Processing " + full_filename)
 
-            [undef, filedir] = full_filename.split(args.source_dir, 1)
+            filedir = full_filename.split(args.source_dir, 1)[1]
             pot = create_pot_file(full_filename)
             pofilename = os.path.join(args.po_dir, filedir)
 
