@@ -43,6 +43,16 @@ defNames = [
     'DefName',  # Some DefNames with first uppercase letter
 ]
 
+def generate_injdef_xml_tag(string):
+    """Create XML tag for InjectDefs"""
+    string = re.sub(r'/', '.', string)
+    string = re.sub(r'\.li\.', '.0.', string)
+    match = re.search(r'\.li\[(\d+)\]', string)
+    if match:
+        string = re.sub(r'\.li\[\d+\]', "." + str(int(match.group(1)) - 1), string)
+
+    return string
+
 
 def create_pot_file(filename):
     """Create POT file (only source strings exists) from given filename"""
@@ -69,26 +79,35 @@ def create_pot_file(filename):
                 print("  Found defName '%s' (%s)" % (defName_node.text, doc.getpath(parent)))
                 for label in labels:
                     parent = defName_node.getparent()
-                    print ("  Checking label %s" % (label))
+                    print("  Checking label %s" % label)
                     label_nodes = parent.findall(".//" + label)
                     for label_node in label_nodes:
                         print("  Found Label '%s' (%s)" % (label, doc.getpath(label_node)))
+                        if len(label_node):
+                            print(" Element has children")
+                            for child_node in label_node:
+                                [undef, path_label] = doc.getpath(child_node).split(doc.getpath(parent), 1)
+                                path_label = generate_injdef_xml_tag(path_label)
+                                print("  msgctxt: " + defName_node.text + path_label)
 
-                        # Generate string for parenting
-                        [undef, path_label] = doc.getpath(label_node).split(doc.getpath(parent), 1)
-                        path_label = re.sub(r'\/', '.', path_label)
-                        path_label = re.sub(r'\.li\.', '.0.', path_label)
-                        match = re.search(r'\.li\[(\d+)\]\.', path_label)
-                        if match:
-                            path_label = re.sub(r'\.li\[\d+\]\.', "." + str(int(match.group(1)) - 1) + ".", path_label)
-                        print("  msgctxt: " + defName_node.text + path_label)
+                                entry = polib.POEntry(
+                                    msgctxt=defName_node.text + path_label,
+                                    msgid=child_node.text,
+                                    occurrences=[(basefile, str(child_node.sourceline))]
+                                )
+                                po.append(entry)
+                        else:
+                            # Generate string for parenting
+                            [undef, path_label] = doc.getpath(label_node).split(doc.getpath(parent), 1)
+                            path_label = generate_injdef_xml_tag(path_label)
+                            print("  msgctxt: " + defName_node.text + path_label)
 
-                        entry = polib.POEntry(
-                            msgctxt=defName_node.text + path_label,
-                            msgid=label_node.text,
-                            occurrences=[(basefile, str(label_node.sourceline))]
-                        )
-                        po.append(entry)
+                            entry = polib.POEntry(
+                                msgctxt=defName_node.text + path_label,
+                                msgid=label_node.text,
+                                occurrences=[(basefile, str(label_node.sourceline))]
+                            )
+                            po.append(entry)
     # sort by line in source file
     po.sort(key=lambda x: int(x.occurrences[0][1]))
 
@@ -126,7 +145,7 @@ for root, dirs, files in os.walk(args.source_dir):
 
     for file in files:
         if file.endswith('.xml'):
-            full_filename = os.path.join(root,file)
+            full_filename = os.path.join(root, file)
             print("Processing " + full_filename)
 
             [undef, filedir] = full_filename.split(args.source_dir, 1)
