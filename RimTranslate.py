@@ -57,6 +57,8 @@ labels = [
     'fixedName',
     'gerund',
     'helpText',
+    'ingestCommandString',
+    'ingestReportString',
     'inspectLine',
     'label',
     'letterLabel',
