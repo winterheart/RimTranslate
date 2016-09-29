@@ -11,9 +11,9 @@ Original Def XML -> PO file -> Translated InjDef XML
 ```
 As with the translation of any text or programs in the process of translation RimWorld inevitably run the risk of obsolescence of translated data. It may come out a new version in which new messages appear or change old ones. In such cases it is difficult to track changes and make corrections. With time and the growth of translated data, the complexity will only increase. In addition to this, the translator usually is not can see at once original and translation - they are stored in different files, and to compare them, you may need a lot of time.
 
-To simplify this process, commonly used practice is to use intermediate format, which provides translation relevance and combines both the original and translated messages. RimTranslate uses open format Gettext, widely used by opensource projects. This format is supported by a number of specialized programs for translators, such as poedit (Linux, OS X, Windows) or lokalize (Linux).
+To simplify this process, commonly used practice is to use intermediate format, which provides translation relevance and combines both the original and translated messages. RimTranslate uses open format Gettext, widely used by opensource projects. This format is supported by a number of specialized programs for translators, such as [poedit](https://poedit.net/) (Linux, OS X, Windows) or [lokalize](https://www.kde.org/applications/development/lokalize/) (Linux).
 
-Through this approach, the translator does not have to manually keep track of changes after the upgrade program, it is enough to update the translation files PO. Changes, if any, will be immediately visible. After the translation of the update is enough to run RimTransalate again, and XML-files will be updated automatically. It's simple!
+Through this approach, the translator does not have to manually keep track of changes after the upgrade program, it is enough to update the translation files PO. Changes, if any, will be immediately visible. After the translation of the update is enough to run RimTranslate again, and XML-files will be updated automatically. It's simple!
 
 ## Installation
 For running RimTranslate you need following dependencies:
