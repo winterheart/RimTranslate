@@ -82,7 +82,7 @@ defNames = [
 def generate_injdef_xml_tag(string):
     """Create XML tag for InjectDefs"""
     string = re.sub(r'/', '.', string)
-    string = re.sub(r'\.li\.', '.0.', string)
+    string = re.sub(r'\.li', '.0', string)
     match = re.search(r'\.li\[(\d+)\]', string)
     if match:
         string = re.sub(r'\.li\[\d+\]', "." + str(int(match.group(1)) - 1), string)
