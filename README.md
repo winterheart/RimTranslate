@@ -22,6 +22,10 @@ For running RimTranslate you need following dependencies:
   * [polib library](https://bitbucket.org/izi/polib/wiki/Home)
   * [lxml library](http://lxml.de/)
 
+### Installing on Windows
+
+Please follow to instructions from [here](INSTALL_Windows.md).
+
 ### Installing on Debian/Ubuntu
 
 ```apt-get install python3 python3-polib python3-lxml```
