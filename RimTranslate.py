@@ -186,7 +186,7 @@ if args.source_dir:
                         po.save(pofilename)
                     else:
                         # Is there some useful info?
-                        if len(po) > 0:
+                        if len(pot) > 0:
                             directory = os.path.dirname(pofilename)
                             if not(os.path.exists(directory)):
                                 logging.info("Creating directory " + directory)
