@@ -8,7 +8,7 @@ import argparse
 import datetime
 import logging
 
-version = "0.5"
+version = "0.5.1"
 
 parser = argparse.ArgumentParser(description='RimTranslate.py v%s - Creating Gettext PO files and DefInjections for RimWorld translations.' % version,
                                  epilog='This is free software that licensed under GPL-3. See LICENSE for more info.',
@@ -36,6 +36,9 @@ if not ((args.output_dir or args.source_dir) and args.po_dir):
   "--source-dir <SOURCE_DIR> --po-dir <PO_DIR>"
   or
   "--output-dir <SOURCE_DIR> --po-dir <PO_DIR>"''')
+
+if os.path.exists('RimTranslate.log'):
+    os.remove('RimTranslate.log')
 
 log_level = getattr(logging, str.upper(args.v))
 logging.basicConfig(format='%(levelname)s: %(message)s', level=log_level, filename='RimTranslate.log')
@@ -82,7 +85,8 @@ defNames = [
 def generate_injdef_xml_tag(string):
     """Create XML tag for InjectDefs"""
     string = re.sub(r'/', '.', string)
-    string = re.sub(r'\.li\.', '.0', string)
+    string = re.sub(r'\.li\.', '.0.', string)
+    string = re.sub(r'\.li$', '.0', string)
     match = re.search(r'\.li\[(\d+)\]', string)
     if match:
         string = re.sub(r'\.li\[\d+\]', "." + str(int(match.group(1)) - 1), string)
@@ -122,16 +126,17 @@ def create_pot_file(filename):
                         if len(label_node):
                             logging.debug("Element has children")
                             for child_node in label_node:
-                                path_label = doc.getpath(child_node).split(doc.getpath(parent), 1)[1]
-                                path_label = generate_injdef_xml_tag(path_label)
-                                logging.debug("msgctxt: " + defName_node.text + path_label)
+                                if child_node.tag is not etree.Comment:
+                                    path_label = doc.getpath(child_node).split(doc.getpath(parent), 1)[1]
+                                    path_label = generate_injdef_xml_tag(path_label)
+                                    logging.debug("msgctxt: " + defName_node.text + path_label)
 
-                                entry = polib.POEntry(
-                                    msgctxt=defName_node.text + path_label,
-                                    msgid=child_node.text,
-                                    occurrences=[(basefile, str(child_node.sourceline))]
-                                )
-                                po_file.append(entry)
+                                    entry = polib.POEntry(
+                                        msgctxt=defName_node.text + path_label,
+                                        msgid=child_node.text,
+                                        occurrences=[(basefile, str(child_node.sourceline))]
+                                    )
+                                    po_file.append(entry)
                         else:
                             # Generate string for parenting
                             path_label = doc.getpath(label_node).split(doc.getpath(parent), 1)[1]
