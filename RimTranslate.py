@@ -201,6 +201,7 @@ if args.compendium:
             for file in files:
                 if file.endswith('.xml'):
                     full_filename = os.path.join(root, file)
+                    logging.debug('Processing %s for compendium' % full_filename)
                     compendium += create_compendium_from_definj(full_filename)
     else:
         logging.error('%s is not directory or does not exists!' % args.compendium)
@@ -232,7 +233,7 @@ if args.source_dir:
                                 logging.info("Creating directory " + directory)
                                 os.makedirs(directory)
                             logging.info("Creating PO file " + pofilename)
-                            po = pot
+                        po = pot
 
                     # If there compendium, fill entries with transaltaion memory
                     if args.compendium:
@@ -243,8 +244,8 @@ if args.source_dir:
                                     entry.msgstr = check_msg.msgstr
                                     if 'fuzzy' not in entry.flags:
                                         entry.flags.append('fuzzy')
-
-                    po.save(pofilename)
+                    if len(po):
+                        po.save(pofilename)
 
     else:
         logging.error('%s is not directory or does not exists!' % args.source_dir)
