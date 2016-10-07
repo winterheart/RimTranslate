@@ -36,11 +36,11 @@ Please follow to instructions from [here](INSTALL_Windows.md).
 
 After installation you need to run initialization process, which generates clean PO-files. Here is command (one line):
 
-> ```python RimTranslate.py -s "C:\games\Steam\SteamApps\common\RimWorld\Mods\Core\Defs\" -p "C:\RimWorld_translate\po"```
+> ```python RimTranslate.py -s "C:\games\Steam\SteamApps\common\RimWorld\Mods\Core\" -p "C:\RimWorld_translate\po"```
 
-As you can see, for now you need only two options: `-s` (directory where resides original Def's) and `-p` (directory, where will be placed PO-files).
+As you can see, for now you need only two options: `-s` (directory where resides original files) and `-p` (directory, where will be placed PO-files).
 
-After that in directory `C:\RimWorld_translate\po` you will see subdirectories with generated PO-files (structure of directories follows to structure of original Defs). As noted above, there exists numbers of programs on various platforms for editing such files. You can even edit them in simple text editor (but is better to use special program to avoid possible errors in format).
+After that in directory `C:\RimWorld_translate\po` you will see subdirectories with generated PO-files (structure of directories follows to structure of original directory). As noted above, there exists numbers of programs on various platforms for editing such files. You can even edit them in simple text editor (but is better to use special program to avoid possible errors in format).
 
 ### Generating translated files
 
@@ -48,21 +48,21 @@ For generating a translated file you need at least an one translated message in 
 
 > ```python RimTranslate.py -o "C:\RimWorld_translate\output" -p "C:\RimWorld_translate\po"```
 
-After that in directory `C:\RimWorld_translate\output` you will see subdirectories with generated files. These subdirectories can be copied into DefInj catalog of your Language Mod for playing and testing in-game.
+After that in directory `C:\RimWorld_translate\output` you will see subdirectories with generated files. These subdirectories can be copied into root catalog of your Language Mod for playing and testing in-game.
 
 ### Actualization
 
 When comes out new version of game with new messages, simply repeat the two previous commands. For convenience, these two commands can be combined:
 
-> ```python RimTranslate.py -s "C:\games\Steam\SteamApps\common\RimWorld\Mods\Core\Defs\" -p "C:\RimWorld_translate\po" -o "C:\RimWorld_translate\output"```
+> ```python RimTranslate.py -s "C:\games\Steam\SteamApps\common\RimWorld\Mods\Core\" -p "C:\RimWorld_translate\po" -o "C:\RimWorld_translate\output"```
 
 If the original message has not changed, the translation will remain intact in the PO-file (files are not replaced, but updated) and will move safely to the translated XML-file. If any message has been deleted in the original, it will also be deleted and in translation as obsolete.
 
-#### Using previous translations
+### Using previous translations
 
 Let's say you already have a set of translated files, which were created manually before you decide to use RimTranslate. To these works were not in vain, RimTranslate have a special option `-c`, when you specify which program will try to extract messages from these files:
 
-> ```python RimTranslate.py -s "C:\games\Steam\SteamApps\common\RimWorld\Mods\Core\Defs\" -p "C:\RimWorld_translate\po" -c "C:\games\Steam\SteamApps\common\RimWorld\Mods\Core\Languages\Russian\DefInjected/"```
+> ```python RimTranslate.py -s "C:\games\Steam\SteamApps\common\RimWorld\Mods\Core\" -p "C:\RimWorld_translate\po" -c "C:\games\Steam\SteamApps\common\RimWorld\Mods\Core\Languages\Russian\"```
 
 These messages will form the so-called compendium, or translation memory, which will be used in the generation of PO-files. If the program finds a match to message in the PO-file, it will automatically add it to the translation. However, to add an additional level of control, such strings marked as the fuzzy, or messages that requires attention of translator. If the message has already been translated (before it was applied translation memory), it will not change.
 

@@ -8,7 +8,7 @@ import argparse
 import datetime
 import logging
 
-version = "0.6.0"
+version = "0.6.5"
 
 parser = argparse.ArgumentParser(description='RimTranslate.py v%s - Creating Gettext PO files and DefInjections for RimWorld translations.' % version,
                                  epilog='This is free software that licensed under GPL-3. See LICENSE for more info.',
@@ -16,7 +16,7 @@ parser = argparse.ArgumentParser(description='RimTranslate.py v%s - Creating Get
 
 group_source = parser.add_argument_group('Extracting options')
 group_source.add_argument('--source-dir', '-s', type=str,
-                          help='''Root source dir where all Defs (ex. ~/.local/share/Steam/SteamApps/common/RimWorld/Mods/Core/Defs/)''')
+                          help='''Root source dir where all Defs and Keyed files (ex. ~/.local/share/Steam/SteamApps/common/RimWorld/Mods/Core/)''')
 
 group_generation = parser.add_argument_group('Generation options')
 group_generation.add_argument('--output-dir', '-o', type=str,
@@ -26,7 +26,7 @@ parser.add_argument('--po-dir', '-p', type=str,
                     help='Directory where will be placed generated or updated PO-files')
 
 parser.add_argument('--compendium', '-c', type=str,
-                    help='Directory that conains already translated InjDefs XML files for generating compedium and using it as translation memory')
+                    help='Directory that conains already translated InjDefs XML files for generating compendium and using it as translation memory')
 
 parser.add_argument('-v', type=str, default='ERROR',
                     help='Enable verbose output (debug, info, warning, error, critical)')
@@ -99,22 +99,36 @@ def generate_definj_xml_tag(string):
     return string
 
 
-def create_compendium_from_definj(filename):
-    """Create compendium from already created definj XML files"""
+def create_pot_file_from_keyed(filename, compendium=False):
+    """Create compendium from keyed or already created definj XML files"""
+    parser = etree.XMLParser(remove_comments=True)
+    basefile = filename.split(args.source_dir, 1)[1]
     po_file = polib.POFile()
-    doc = etree.parse(filename)
+    po_file.metadata = {
+        'Project-Id-Version': '1.0',
+        'Report-Msgid-Bugs-To': 'you@example.com',
+        'POT-Creation-Date': str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")),
+        'PO-Revision-Date': str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")),
+        'Last-Translator': 'Some Translator <yourname@example.com>',
+        'Language-Team': 'English <yourteam@example.com>',
+        'MIME-Version': '1.0',
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Content-Transfer-Encoding': '8bit',
+    }
+    po_file.metadata_is_fuzzy = 1
+    doc = etree.parse(filename, parser)
     for languageData in doc.xpath('//LanguageData'):
         for element in languageData:
-            if element.tag is not etree.Comment():
-                entry = polib.POEntry(
-                    msgctxt=element.tag,
-                    msgid=element.tag,
-                    msgstr=element.text
-                )
+            entry = polib.POEntry(
+                msgctxt=element.tag,
+                msgid=element.text,
+                occurrences=[(basefile, str(element.sourceline))]
+            )
+            if compendium:
+                entry.msgstr = element.text
             po_file.append(entry)
 
     return po_file
-
 
 
 def create_pot_file_from_def(filename):
@@ -202,23 +216,28 @@ if args.compendium:
                 if file.endswith('.xml'):
                     full_filename = os.path.join(root, file)
                     logging.debug('Processing %s for compendium' % full_filename)
-                    compendium += create_compendium_from_definj(full_filename)
+                    compendium += create_pot_file_from_keyed(full_filename, True)
     else:
         logging.error('%s is not directory or does not exists!' % args.compendium)
 
 
 if args.source_dir:
     logging.info('Beginning to generate PO-files')
-    if os.path.isdir(args.source_dir):
-        for root, dirs, files in os.walk(args.source_dir):
+
+    logging.info('Generating PO-files from Defs')
+    # Parse Defs subdirectory
+    defs_source_dir = os.path.join(args.source_dir, 'Defs', '')
+
+    if os.path.isdir(defs_source_dir):
+        for root, dirs, files in os.walk(defs_source_dir):
             for file in files:
                 if file.endswith('.xml'):
                     full_filename = os.path.join(root, file)
                     logging.info("Processing " + full_filename)
-                    file_dir = full_filename.split(args.source_dir, 1)[1]
+                    file_dir = full_filename.split(defs_source_dir, 1)[1]
 
                     pot = create_pot_file_from_def(full_filename)
-                    pofilename = os.path.join(args.po_dir, file_dir)
+                    pofilename = os.path.join(args.po_dir, 'DefInjected', file_dir)
                     pofilename += '.po'
 
                     if os.path.exists(pofilename):
@@ -235,7 +254,7 @@ if args.source_dir:
                             logging.info("Creating PO file " + pofilename)
                         po = pot
 
-                    # If there compendium, fill entries with transaltaion memory
+                    # If there compendium, fill entries with translation memory
                     if args.compendium:
                         for entry in po:
                             if entry.msgstr == '':
@@ -248,8 +267,55 @@ if args.source_dir:
                         po.save(pofilename)
 
     else:
-        logging.error('%s is not directory or does not exists!' % args.source_dir)
+        logging.error('%s is not directory or does not exists!' % defs_source_dir)
         quit()
+
+    logging.info('Generating PO-files from Keyed')
+    # Parse Language/English/Keyed
+    keyed_source_dir = os.path.join(args.source_dir, 'Languages/English/Keyed', '')
+
+    # Processing Keyed folder
+    if os.path.isdir(keyed_source_dir):
+        for root, dirs, files in os.walk(keyed_source_dir):
+            for file in files:
+                if file.endswith('.xml'):
+                    full_filename = os.path.join(root, file)
+                    logging.info("Processing " + full_filename)
+                    file_dir = full_filename.split(keyed_source_dir, 1)[1]
+
+                    pot = create_pot_file_from_keyed(full_filename)
+                    pofilename = os.path.join(args.po_dir, 'Keyed', file_dir)
+                    pofilename += '.po'
+
+                    if os.path.exists(pofilename):
+                        logging.info("Updating PO file " + pofilename)
+                        po = polib.pofile(pofilename)
+                        po.merge(pot)
+                    else:
+                        # Is there some useful info?
+                        if len(pot) > 0:
+                            directory = os.path.dirname(pofilename)
+                            if not (os.path.exists(directory)):
+                                logging.info("Creating directory " + directory)
+                                os.makedirs(directory)
+                            logging.info("Creating PO file " + pofilename)
+                        po = pot
+
+                    # If there compendium, fill entries with translation memory
+                    if args.compendium:
+                        for entry in po:
+                            if entry.msgstr == '':
+                                check_msg = compendium.find(entry.msgctxt, by='msgctxt', include_obsolete_entries=False)
+                                if check_msg and check_msg.msgstr:
+                                    entry.msgstr = check_msg.msgstr
+                                    if 'fuzzy' not in entry.flags:
+                                        entry.flags.append('fuzzy')
+                    if len(po):
+                        po.save(pofilename)
+    else:
+        logging.error('%s is not directory or does not exists!' % keyed_source_dir)
+        quit()
+
 
 if args.output_dir:
     logging.info('Beginning to generate DefInjected files')
