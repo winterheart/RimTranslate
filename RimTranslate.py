@@ -64,11 +64,13 @@ labels = [
     'description',
     'fixedName',
     'gerund',
+    'gerundLabel',
     'helpText',
     'ingestCommandString',
     'ingestReportString',
     'inspectLine',
     'label',
+    'labelShort',
     'letterLabel',
     'letterText',
     'pawnLabel',
@@ -78,6 +80,7 @@ labels = [
     'reportString',
     'skillLabel',
     'text',
+    'useLabel',
     'verb',
 ]
 
