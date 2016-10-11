@@ -105,7 +105,11 @@ def generate_definj_xml_tag(string):
 def create_pot_file_from_keyed(filename, compendium=False):
     """Create compendium from keyed or already created definj XML files"""
     parser = etree.XMLParser(remove_comments=True)
-    basefile = filename.split(args.source_dir, 1)[1]
+    if args.compendium:
+        basefile = 'compendium'
+    else:
+        basefile = filename.split(args.source_dir, 1)[1]
+
     po_file = polib.POFile()
     po_file.metadata = {
         'Project-Id-Version': '1.0',
