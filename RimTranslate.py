@@ -173,22 +173,30 @@ def create_pot_file_from_def(filename):
                                 if child_node.tag is not etree.Comment:
                                     path_label = doc.getpath(child_node).split(doc.getpath(parent), 1)[1]
                                     path_label = generate_definj_xml_tag(path_label)
+
+                                    logging.debug("msgctxt: " + defName_node.text + path_label)
+                                    entry = polib.POEntry(
+                                        msgctxt=defName_node.text + path_label,
+                                        msgid=child_node.text,
+                                        occurrences=[(basefile, str(label_node.sourceline))]
+                                    )
+                                    po_file.append(entry)
                         else:
                             # Generate string for parenting
                             path_label = doc.getpath(label_node).split(doc.getpath(parent), 1)[1]
                             path_label = generate_definj_xml_tag(path_label)
 
-                        logging.debug("msgctxt: " + defName_node.text + path_label)
+                            logging.debug("msgctxt: " + defName_node.text + path_label)
 
-                        if not label_node.text:
-                            logging.warn(path_label + " has 'None' message!")
-                        else:
-                            entry = polib.POEntry(
-                                msgctxt=defName_node.text + path_label,
-                                msgid=label_node.text,
-                                occurrences=[(basefile, str(label_node.sourceline))]
-                            )
-                            po_file.append(entry)
+                            if not label_node.text:
+                                logging.warn(path_label + " has 'None' message!")
+                            else:
+                                entry = polib.POEntry(
+                                    msgctxt=defName_node.text + path_label,
+                                    msgid=label_node.text,
+                                    occurrences=[(basefile, str(label_node.sourceline))]
+                                )
+                                po_file.append(entry)
     # sort by line in source file
     po_file.sort(key=lambda x: int(x.occurrences[0][1]))
 
