@@ -322,6 +322,8 @@ if args.source_dir:
 
 if args.output_dir:
     logging.info('Beginning to generate DefInjected files')
+    total = 0
+    translated = 0
     for root, dirs, files in os.walk(args.po_dir):
         for file in files:
             if file.endswith('.po'):
@@ -333,8 +335,10 @@ if args.output_dir:
                 directory = os.path.dirname(xml_filename)
 
                 po = polib.pofile(full_filename)
+                translated_po_entries = len(po.translated_entries())
+                translated = translated + translated_po_entries
                 # Do we have translated entries?
-                if len(po.translated_entries()) > 0:
+                if translated_po_entries > 0:
                     if not (os.path.exists(directory)):
                         logging.info("Creating directory " + directory)
                         os.makedirs(directory)
@@ -343,3 +347,7 @@ if args.output_dir:
                     target = open(xml_filename, 'w')
                     target.write(xml_content)
                     target.close()
+                total_po_entries = len([e for e in po if  not e.obsolete])
+                total = total + total_po_entries
+
+    print("Statistics (translated/total): %d/%d" % (translated, total))
