@@ -322,8 +322,11 @@ if args.source_dir:
 
 if args.output_dir:
     logging.info('Beginning to generate DefInjected files')
+    fuzzy = 0
     total = 0
     translated = 0
+    untranslated = 0
+
     for root, dirs, files in os.walk(args.po_dir):
         for file in files:
             if file.endswith('.po'):
@@ -336,7 +339,13 @@ if args.output_dir:
 
                 po = polib.pofile(full_filename)
                 translated_po_entries = len(po.translated_entries())
+                fuzzy_po_entries = len(po.fuzzy_entries())
+                untranslated_po_entries = len(po.untranslated_entries())
+
                 translated = translated + translated_po_entries
+                fuzzy = fuzzy + fuzzy_po_entries
+                untranslated = untranslated + untranslated_po_entries
+
                 # Do we have translated entries?
                 if translated_po_entries > 0:
                     if not (os.path.exists(directory)):
@@ -350,4 +359,5 @@ if args.output_dir:
                 total_po_entries = len([e for e in po if  not e.obsolete])
                 total = total + total_po_entries
 
-    print("Statistics (translated/total): %d/%d" % (translated, total))
+    print("Statistics (untranslated/fuzzy/translated/total): %d/%d/%d/%d" % (untranslated, fuzzy, translated, total))
+
