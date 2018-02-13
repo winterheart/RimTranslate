@@ -8,7 +8,7 @@ import argparse
 import datetime
 import logging
 
-version = "0.6.5"
+version = "0.6.6"
 
 parser = argparse.ArgumentParser(description='RimTranslate.py v%s - Creating Gettext PO files and DefInjections for RimWorld translations.' % version,
                                  epilog='This is free software that licensed under GPL-3. See LICENSE for more info.',
@@ -173,20 +173,16 @@ def create_pot_file_from_def(filename):
                                 if child_node.tag is not etree.Comment:
                                     path_label = doc.getpath(child_node).split(doc.getpath(parent), 1)[1]
                                     path_label = generate_definj_xml_tag(path_label)
-                                    logging.debug("msgctxt: " + defName_node.text + path_label)
-
-                                    entry = polib.POEntry(
-                                        msgctxt=defName_node.text + path_label,
-                                        msgid=child_node.text,
-                                        occurrences=[(basefile, str(child_node.sourceline))]
-                                    )
-                                    po_file.append(entry)
                         else:
                             # Generate string for parenting
                             path_label = doc.getpath(label_node).split(doc.getpath(parent), 1)[1]
                             path_label = generate_definj_xml_tag(path_label)
-                            logging.debug("msgctxt: " + defName_node.text + path_label)
 
+                        logging.debug("msgctxt: " + defName_node.text + path_label)
+
+                        if not label_node.text:
+                            logging.warn(path_label + " has 'None' message!")
+                        else:
                             entry = polib.POEntry(
                                 msgctxt=defName_node.text + path_label,
                                 msgid=label_node.text,
