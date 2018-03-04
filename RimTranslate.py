@@ -8,7 +8,7 @@ import argparse
 import datetime
 import logging
 
-version = "0.6.6"
+version = "0.6.7"
 
 parser = argparse.ArgumentParser(description='RimTranslate.py v%s - Creating Gettext PO files and DefInjections for RimWorld translations.' % version,
                                  epilog='This is free software that licensed under GPL-3. See LICENSE for more info.',
@@ -246,6 +246,8 @@ if args.source_dir:
                     full_filename = os.path.join(root, file)
                     logging.info("Processing " + full_filename)
                     file_dir = full_filename.split(defs_source_dir, 1)[1]
+                    # Replace Defs to Def, issue #1
+                    file_dir = file_dir.replace("Defs", "Def")
 
                     pot = create_pot_file_from_def(full_filename)
                     pofilename = os.path.join(args.po_dir, 'DefInjected', file_dir)
@@ -359,9 +361,9 @@ if args.output_dir:
                     if not (os.path.exists(directory)):
                         logging.info("Creating directory " + directory)
                         os.makedirs(directory)
-                    logging.info("Creating XML file " + pofilename)
+                    logging.info("Creating XML file for " + pofilename)
                     xml_content = create_languagedata_xml_file(full_filename)
-                    target = open(xml_filename, 'w')
+                    target = open(xml_filename, "w", encoding="utf8")
                     target.write(xml_content)
                     target.close()
                 total_po_entries = len([e for e in po if  not e.obsolete])
