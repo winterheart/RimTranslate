@@ -189,7 +189,7 @@ def create_pot_file_from_def(filename):
                             logging.debug("msgctxt: " + defName_node.text + path_label)
 
                             if not label_node.text:
-                                logging.warn(path_label + " has 'None' message!")
+                                logging.warning(path_label + " has 'None' message!")
                             else:
                                 entry = polib.POEntry(
                                     msgctxt=defName_node.text + path_label,
