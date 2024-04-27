@@ -1,2 +1,6 @@
 .idea
 RimTranslate.log
+po/
+output/
+.tool-versions
+src/__pycache__/
