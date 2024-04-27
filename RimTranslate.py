@@ -361,7 +361,6 @@ if args.output_dir:
                     if not (os.path.exists(directory)):
                         logging.info("Creating directory " + directory)
                         os.makedirs(directory)
-                    logging.info("Creating XML file for " + pofilename)
                     xml_content = create_languagedata_xml_file(full_filename)
                     target = open(xml_filename, "w", encoding="utf8")
                     target.write(xml_content)
