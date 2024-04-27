@@ -1,11 +1,9 @@
 #!/usr/bin/python
 # TODO: set up a linter?
 
-import sys
 import os
-import re
 import polib
-import datetime
+import sys
 
 sys.path.append('src')
 
@@ -19,37 +17,6 @@ if os.path.exists('RimTranslate.log'):
 
 logger = create_logger(args.v)
 
-labels = [
-    'beginLetter',
-    'beginLetterLabel',
-    'description',
-    'fixedName',
-    'gerund',
-    'gerundLabel',
-    'helpText',
-    'ingestCommandString',
-    'ingestReportString',
-    'inspectLine',
-    'label',
-    'labelShort',
-    'letterLabel',
-    'letterText',
-    'pawnLabel',
-    'pawnsPlural',
-    'rulesStrings',         # hard one
-    'recoveryMessage',
-    'reportString',
-    'skillLabel',
-    'text',
-    'useLabel',
-    'verb',
-]
-
-defNames = [
-    'defName',
-    'DefName',  # Some DefNames with first uppercase letter
-]
-
 if args.compendium:
     logger.info('Creating compendium from already exist DefInj XML files')
     if os.path.isdir(args.compendium):
@@ -59,7 +26,7 @@ if args.compendium:
                 if file.endswith('.xml'):
                     full_filename = os.path.join(root, file)
                     logger.debug('Processing %s for compendium' % full_filename)
-                    compendium += create_pot_file_from_keyed(full_filename, True)
+                    compendium += create_pot_file_from_keyed(full_filename, args.source_dir, args.compendium, True)
     else:
         logger.error('%s is not directory or does not exists!' % args.compendium)
 
@@ -81,7 +48,7 @@ if args.source_dir:
                     # Replace Defs to Def, issue #1
                     file_dir = file_dir.replace("Defs", "Def")
 
-                    pot = create_pot_file_from_def(full_filename)
+                    pot = create_pot_file_from_def(full_filename, args.source_dir)
                     pofilename = os.path.join(args.po_dir, 'DefInjected', file_dir)
                     pofilename += '.po'
 
@@ -128,7 +95,7 @@ if args.source_dir:
                     logger.info("Processing " + full_filename)
                     file_dir = full_filename.split(keyed_source_dir, 1)[1]
 
-                    pot = create_pot_file_from_keyed(full_filename)
+                    pot = create_pot_file_from_keyed(full_filename, args.source_dir, args.compendium)
                     pofilename = os.path.join(args.po_dir, 'Keyed', file_dir)
                     pofilename += '.po'
 

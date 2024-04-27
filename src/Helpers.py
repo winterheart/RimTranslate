@@ -1,9 +1,42 @@
+import datetime
 import logging
 from lxml import etree
 import polib
+import re
 
 # TODO: this is also in main file
 version = "0.6.7"
+
+labels = [
+    'beginLetter',
+    'beginLetterLabel',
+    'description',
+    'fixedName',
+    'gerund',
+    'gerundLabel',
+    'helpText',
+    'ingestCommandString',
+    'ingestReportString',
+    'inspectLine',
+    'label',
+    'labelShort',
+    'letterLabel',
+    'letterText',
+    'pawnLabel',
+    'pawnsPlural',
+    'rulesStrings',         # hard one
+    'recoveryMessage',
+    'reportString',
+    'skillLabel',
+    'text',
+    'useLabel',
+    'verb',
+]
+
+defNames = [
+    'defName',
+    'DefName',  # Some DefNames with first uppercase letter
+]
 
 # TODO: this is a private method
 def generate_definj_xml_tag(string):
@@ -37,13 +70,13 @@ def create_logger(log_level_string):
     logger.addHandler(console)
     return logger
 
-def create_pot_file_from_keyed(filename, compendium=False):
+def create_pot_file_from_keyed(filename, source_dir, compendium, compendium_mode=False):
     """Create compendium from keyed or already created definj XML files"""
     parser = etree.XMLParser(remove_comments=True)
-    if args.compendium:
+    if compendium:
         basefile = 'compendium'
     else:
-        basefile = filename.split(args.source_dir, 1)[1]
+        basefile = filename.split(source_dir, 1)[1]
 
     po_file = polib.POFile()
     po_file.metadata = {
@@ -66,18 +99,18 @@ def create_pot_file_from_keyed(filename, compendium=False):
                 msgid=element.text,
                 occurrences=[(basefile, str(element.sourceline))]
             )
-            if compendium:
+            if compendium_mode:
                 entry.msgstr = element.text
             po_file.append(entry)
 
     return po_file
 
 
-def create_pot_file_from_def(filename):
+def create_pot_file_from_def(filename, source_dir):
     """Create POT file (only source strings exists) from given filename"""
     doc = etree.parse(filename)
     po_file = polib.POFile()
-    basefile = filename.split(args.source_dir, 1)[1]
+    basefile = filename.split(source_dir, 1)[1]
     po_file.metadata = {
         'Project-Id-Version': '1.0',
         'Report-Msgid-Bugs-To': 'you@example.com',
@@ -92,7 +125,7 @@ def create_pot_file_from_def(filename):
     po_file.metadata_is_fuzzy = 1
 
     for defName in defNames:
-        for defName_node in doc.findall("//" + defName):
+        for defName_node in doc.findall(".//" + defName):
             if defName_node is not None:
                 parent = defName_node.getparent()
                 logging.debug("Found defName '%s' (%s)" % (defName_node.text, doc.getpath(parent)))
