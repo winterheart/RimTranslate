@@ -44,13 +44,14 @@ def parse_arguments():
 
     # TODO: do we need this? I don't think so. argparse reports usage anyway
     #       but then it's nice to have extra guidance
-    #  if not ((args.output_dir or args.source_dir) and args.po_dir):
-    #      parser.error('''
-    #          No action requested. The following arguments are required:
-    #          "--source-dir <SOURCE_DIR> --po-dir <PO_DIR>"
-    #          or
-    #          "--output-dir <SOURCE_DIR> --po-dir <PO_DIR>"
-    #      ''')
+    #       it also guards against execution without proper arguments
+    if not ((args.output_dir or args.source_dir) and args.po_dir):
+        parser.error('''
+            No action requested. The following arguments are required:
+            "--source-dir <SOURCE_DIR> --po-dir <PO_DIR>"
+            or
+            "--output-dir <SOURCE_DIR> --po-dir <PO_DIR>"
+        ''')
 
     # Add trailing slash for sure
     if args.source_dir:
@@ -60,4 +61,4 @@ def parse_arguments():
     if args.output_dir:
         args.output_dir = os.path.join(args.output_dir, '')
 
-    return parser, args
+    return args
