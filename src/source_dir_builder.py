@@ -1,7 +1,8 @@
 import os
 import polib
 
-from helpers import create_pot_file, merge_compendium
+from helpers import create_pot_file
+from compendium_helpers import build_compendium, merge_compendium
 
 class SourceDirBuilder:
     def __init__(self, args, logger):
@@ -10,7 +11,7 @@ class SourceDirBuilder:
 
         self.compendium = None
         if self.args.compendium:
-            self.compendium = self.build_compendium()
+            self.compendium = build_compendium(self.args.compendium, self.args.source_dir, self.logger)
 
     def build_source_dir(self):
         self.logger.info('Beginning to generate PO-files')
@@ -73,25 +74,3 @@ class SourceDirBuilder:
 
                     if len(po):
                         po.save(pofilename)
-
-    def build_compendium(self):
-        if hasattr(self, 'compendium'):
-            self.logger.warn('Compendium already built; skipping.')
-            return self.compendium
-
-        self.logger.info('Creating compendium from already exist DefInj XML files')
-
-        if not os.path.isdir(self.args.compendium):
-            self.logger.error('%s is not directory or does not exists!' % self.args.compendium)
-            quit()
-
-        compendium = polib.POFile()
-
-        for root, dirs, files in os.walk(self.args.compendium):
-            for file in files:
-                if file.endswith('.xml'):
-                    full_filename = os.path.join(root, file)
-                    self.logger.debug('Processing %s for compendium' % full_filename)
-                    compendium += create_pot_file_from_keyed(full_filename, self.args.source_dir, self.args.compendium, True)
-
-        return compendium

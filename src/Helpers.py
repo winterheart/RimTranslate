@@ -1,5 +1,5 @@
 import datetime
-import logging
+import logging # TODO: use logger object
 from lxml import etree
 import os
 import polib
@@ -200,15 +200,3 @@ def create_languagedata_xml_file(po_file):
     # Hack - silly lxml cannot write native unicode strings
     xml_file = etree.tostring(xml, pretty_print=True, xml_declaration=True, encoding='utf-8').decode('utf-8')
     return xml_file
-
-def merge_compendium(compendium, po):
-    # If there compendium, fill entries with translation memory
-    for entry in po:
-        if entry.msgstr == '':
-            check_msg = compendium.find(entry.msgctxt, by='msgctxt', include_obsolete_entries=False)
-            if check_msg and check_msg.msgstr:
-                entry.msgstr = check_msg.msgstr
-                if 'fuzzy' not in entry.flags:
-                    entry.flags.append('fuzzy')
-
-    return po
