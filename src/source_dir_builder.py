@@ -1,7 +1,7 @@
 import os
 import polib
 
-from Helpers import create_pot_file, merge_compendium
+from helpers import create_pot_file, merge_compendium
 
 class SourceDirBuilder:
     def __init__(self, args, compendium, logger):

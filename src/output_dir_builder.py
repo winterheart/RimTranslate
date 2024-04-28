@@ -1,7 +1,7 @@
 import os
 import polib
 
-from Helpers import create_languagedata_xml_file
+from helpers import create_languagedata_xml_file
 
 class OutputDirBuilder():
     def __init__(self, args, logger):
