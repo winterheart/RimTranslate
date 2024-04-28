@@ -36,7 +36,7 @@ def parse_arguments():
     # TODO: change default level to WARNING
     # TODO: change help message to use all caps values (e.g. DEBUG)
     parser.add_argument(
-        '-v', type=str, default='ERROR',
+        '-v', type=str, default='WARNING',
         help='Enable verbose output (debug, info, warning, error, critical)'
     )
 

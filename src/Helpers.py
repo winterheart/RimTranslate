@@ -1,9 +1,10 @@
+# TODO: split up this file into better themed files
 import datetime
-import logging # TODO: use logger object
 from lxml import etree
-import os
 import polib
 import re
+
+from logger import Logger
 
 # TODO: this is also in main file
 version = "0.6.7"
@@ -51,30 +52,6 @@ def generate_definj_xml_tag(string):
 
     return string
 
-def create_logger(log_level_string):
-    # TODO: move log into a new log/ folder
-    if os.path.exists('RimTranslate.log'):
-        os.remove('RimTranslate.log')
-
-    log_format = '%(levelname)s: %(message)s' 
-    log_level = getattr(logging, str.upper(log_level_string))
-
-    logging.basicConfig(
-        format=log_format,
-        level=log_level,
-        filename='RimTranslate.log' # TODO: change log name to not be too close to runtime name
-    )
-
-    # TODO: set streamhandler to not output to stderr by default
-    #       https://docs.python.org/3/library/logging.handlers.html#logging.StreamHandler
-    console = logging.StreamHandler()
-    console.setLevel(log_level)
-    console.setFormatter(logging.Formatter(log_format))
-
-    logger = logging.getLogger('main')
-    logger.addHandler(console)
-    return logger
-
 def create_pot_file(category, filename, source_dir, compendium, compendium_mode=False):
     if category == 'DefInjected':
         return create_pot_file_from_def(filename, source_dir)
@@ -82,7 +59,7 @@ def create_pot_file(category, filename, source_dir, compendium, compendium_mode=
         return create_pot_file_from_keyed(filename, source_dir, compendium, compendium_mode)
     else:
         # TODO: error here
-        logging.error('Incorrect pot file category requested: %s' % category)
+        Logger.logger.error('Incorrect pot file category requested: %s' % category)
         quit()
 
 def create_pot_file_from_keyed(filename, source_dir, compendium, compendium_mode=False):
@@ -143,21 +120,21 @@ def create_pot_file_from_def(filename, source_dir):
         for defName_node in doc.findall(".//" + defName):
             if defName_node is not None:
                 parent = defName_node.getparent()
-                logging.debug("Found defName '%s' (%s)" % (defName_node.text, doc.getpath(parent)))
+                Logger.logger.debug("Found defName '%s' (%s)" % (defName_node.text, doc.getpath(parent)))
                 for label in labels:
                     parent = defName_node.getparent()
-                    logging.debug("Checking label %s" % label)
+                    Logger.logger.debug("Checking label %s" % label)
                     label_nodes = parent.findall(".//" + label)
                     for label_node in label_nodes:
-                        logging.debug("Found Label '%s' (%s)" % (label, doc.getpath(label_node)))
+                        Logger.logger.debug("Found Label '%s' (%s)" % (label, doc.getpath(label_node)))
                         if len(label_node):
-                            logging.debug("Element has children")
+                            Logger.logger.debug("Element has children")
                             for child_node in label_node:
                                 if child_node.tag is not etree.Comment:
                                     path_label = doc.getpath(child_node).split(doc.getpath(parent), 1)[1]
                                     path_label = generate_definj_xml_tag(path_label)
 
-                                    logging.debug("msgctxt: " + defName_node.text + path_label)
+                                    Logger.logger.debug("msgctxt: " + defName_node.text + path_label)
                                     entry = polib.POEntry(
                                         msgctxt=defName_node.text + path_label,
                                         msgid=child_node.text,
@@ -169,10 +146,10 @@ def create_pot_file_from_def(filename, source_dir):
                             path_label = doc.getpath(label_node).split(doc.getpath(parent), 1)[1]
                             path_label = generate_definj_xml_tag(path_label)
 
-                            logging.debug("msgctxt: " + defName_node.text + path_label)
+                            Logger.logger.debug("msgctxt: " + defName_node.text + path_label)
 
                             if not label_node.text:
-                                logging.warning(path_label + " has 'None' message!")
+                                Logger.logger.warning(path_label + " has 'None' message!")
                             else:
                                 entry = polib.POEntry(
                                     msgctxt=defName_node.text + path_label,

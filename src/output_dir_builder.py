@@ -2,14 +2,14 @@ import os
 import polib
 
 from helpers import create_languagedata_xml_file
+from logger import Logger
 
 class OutputDirBuilder():
-    def __init__(self, args, logger):
+    def __init__(self, args):
         self.args = args
-        self.logger = logger
 
     def build_output_dir(self):
-        self.logger.info('Beginning to generate DefInjected files')
+        Logger.logger.info('Beginning to generate DefInjected files')
         fuzzy = 0
         total = 0
         translated = 0
@@ -19,7 +19,7 @@ class OutputDirBuilder():
             for file in files:
                 if file.endswith('.po'):
                     full_filename = os.path.join(root, file)
-                    self.logger.info("Processing " + full_filename)
+                    Logger.logger.info("Processing " + full_filename)
                     xml_filename = full_filename.split(self.args.po_dir, 1)[1]
                     xml_filename = xml_filename.strip('.po')
                     xml_filename = os.path.join(self.args.output_dir, xml_filename)
@@ -37,7 +37,7 @@ class OutputDirBuilder():
                     # Do we have translated entries?
                     if translated_po_entries > 0:
                         if not (os.path.exists(directory)):
-                            self.logger.info("Creating directory " + directory)
+                            Logger.logger.info("Creating directory " + directory)
                             os.makedirs(directory)
                         xml_content = create_languagedata_xml_file(full_filename)
                         target = open(xml_filename, "w", encoding="utf8")

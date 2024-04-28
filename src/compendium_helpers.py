@@ -2,12 +2,13 @@ import os
 import polib
 
 from helpers import create_pot_file
+from logger import Logger
 
-def build_compendium(compendium_path, source_dir_path, logger):
-    logger.info('Creating compendium from already exist DefInj XML files')
+def build_compendium(compendium_path, source_dir_path):
+    Logger.logger.info('Creating compendium from already exist DefInj XML files')
 
     if not os.path.isdir(compendium_path):
-        logger.error('%s is not directory or does not exists!' % compendium_path)
+        Logger.logger.error('%s is not directory or does not exists!' % compendium_path)
         quit()
 
     compendium = polib.POFile()
@@ -16,7 +17,7 @@ def build_compendium(compendium_path, source_dir_path, logger):
         for file in files:
             if file.endswith('.xml'):
                 full_filename = os.path.join(root, file)
-                logger.debug('Processing %s for compendium' % full_filename)
+                Logger.logger.debug('Processing %s for compendium' % full_filename)
                 compendium += create_pot_file('Keyed', full_filename, source_dir_path, compendium_path, True)
 
     return compendium

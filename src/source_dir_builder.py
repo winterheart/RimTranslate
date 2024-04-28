@@ -1,20 +1,20 @@
 import os
 import polib
 
-from helpers import create_pot_file
 from compendium_helpers import build_compendium, merge_compendium
+from helpers import create_pot_file
+from logger import Logger
 
 class SourceDirBuilder:
-    def __init__(self, args, logger):
+    def __init__(self, args):
         self.args = args
-        self.logger = logger
 
         self.compendium = None
         if self.args.compendium:
-            self.compendium = build_compendium(self.args.compendium, self.args.source_dir, self.logger)
+            self.compendium = build_compendium(self.args.compendium, self.args.source_dir)
 
     def build_source_dir(self):
-        self.logger.info('Beginning to generate PO-files')
+        Logger.logger.info('Beginning to generate PO-files')
         self.build_source_dir_defs()
         self.build_source_dir_keyed()
 
@@ -34,17 +34,17 @@ class SourceDirBuilder:
 
     # TODO: private
     def build_source_dir_files(self, category_name, source_dir):
-        self.logger.info('Generating PO-files from %s' % category_name)
+        Logger.logger.info('Generating PO-files from %s' % category_name)
 
         if not os.path.isdir(source_dir):
-            self.logger.error('%s is not a directory' % source_dir)
+            Logger.logger.error('%s is not a directory' % source_dir)
             quit()
 
         for root, dirs, files in os.walk(source_dir):
             for file in files:
                 if file.endswith('.xml'):
                     full_filename = os.path.join(root, file)
-                    self.logger.info("Processing " + full_filename)
+                    Logger.logger.info("Processing " + full_filename)
                     file_dir = full_filename.split(source_dir, 1)[1]
 
                     if category_name == 'DefInjected':
@@ -56,7 +56,7 @@ class SourceDirBuilder:
                     pofilename += '.po'
 
                     if os.path.exists(pofilename):
-                        self.logger.info("Updating PO file " + pofilename)
+                        Logger.logger.info("Updating PO file " + pofilename)
                         po = polib.pofile(pofilename)
                         po.merge(pot)
                     else:
@@ -64,9 +64,9 @@ class SourceDirBuilder:
                         if len(pot) > 0:
                             directory = os.path.dirname(pofilename)
                             if not (os.path.exists(directory)):
-                                self.logger.info("Creating directory " + directory)
+                                Logger.logger.info("Creating directory " + directory)
                                 os.makedirs(directory)
-                            self.logger.info("Creating PO file " + pofilename)
+                            Logger.logger.info("Creating PO file " + pofilename)
                         po = pot
 
                     if self.args.compendium:
