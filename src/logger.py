@@ -5,10 +5,10 @@ class Logger:
     logger = None
 
     @classmethod
-    def create_logger(cls, log_level_string):
-        # TODO: move log into a new log/ folder
-        if os.path.exists('RimTranslate.log'):
-            os.remove('RimTranslate.log')
+    def init(cls, log_level_string):
+        os.makedirs('logs/', exist_ok=True)
+        if os.path.exists('logs/RimTranslate.log'):
+            os.remove('logs/RimTranslate.log')
 
         log_format = '%(levelname)s: %(message)s' 
         log_level = getattr(logging, str.upper(log_level_string))
@@ -16,7 +16,7 @@ class Logger:
         logging.basicConfig(
             format=log_format,
             level=log_level,
-            filename='RimTranslate.log' # TODO: change log name to not be too close to runtime name
+            filename='logs/RimTranslate.log'
         )
 
         # TODO: set streamhandler to not output to stderr by default
@@ -28,8 +28,4 @@ class Logger:
         cls.logger = logging.getLogger('main')
         cls.logger.addHandler(console)
 
-        return cls.logger
-
-    @classmethod
-    def get_logger(cls):
         return cls.logger
