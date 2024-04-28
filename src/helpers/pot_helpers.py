@@ -3,7 +3,7 @@ from lxml import etree
 import polib
 import re
 
-from logger import Logger
+from ..logger import Logger
 
 def create_pot_file(category, filename, source_dir, compendium, compendium_mode=False):
     if category == 'DefInjected':

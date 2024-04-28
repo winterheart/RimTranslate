@@ -3,4 +3,4 @@ RimTranslate.log
 po/
 output/
 .tool-versions
-src/__pycache__/
+__pycache__/

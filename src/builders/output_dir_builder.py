@@ -2,7 +2,7 @@ from lxml import etree
 import os
 import polib
 
-from logger import Logger
+from ..logger import Logger
 
 # TODO: this is also in main file
 version = "0.6.7"

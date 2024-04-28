@@ -1,8 +1,8 @@
 import os
 import polib
 
-from pot_helpers import create_pot_file
-from logger import Logger
+from .pot_helpers import create_pot_file
+from ..logger import Logger
 
 def build_compendium(compendium_path, source_dir_path):
     Logger.logger.info('Creating compendium from already exist DefInj XML files')

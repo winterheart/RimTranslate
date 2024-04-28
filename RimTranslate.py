@@ -1,12 +1,8 @@
 #!/usr/bin/python
-import sys
-
-sys.path.append('src')
-
-from logger import Logger
-from parser_helpers import parse_arguments
-from source_dir_builder import SourceDirBuilder
-from output_dir_builder import OutputDirBuilder
+from src.builders.source_dir_builder import SourceDirBuilder
+from src.builders.output_dir_builder import OutputDirBuilder
+from src.helpers.parser_helpers import parse_arguments
+from src.logger import Logger
 
 
 args = parse_arguments()
