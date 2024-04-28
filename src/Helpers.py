@@ -70,6 +70,16 @@ def create_logger(log_level_string):
     logger.addHandler(console)
     return logger
 
+def create_pot_file(category, filename, source_dir, compendium, compendium_mode):
+    if category == 'DefInjected':
+        return create_pot_file_from_def(filename, source_dir)
+    elif category == 'Keyed':
+        return create_pot_file_from_keyed(filename, source_dir, compendium, compendium_mode)
+    else:
+        # TODO: error here
+        logging.error('Incorrect pot file category requested: %s' % category)
+        quit()
+
 def create_pot_file_from_keyed(filename, source_dir, compendium, compendium_mode=False):
     """Create compendium from keyed or already created definj XML files"""
     parser = etree.XMLParser(remove_comments=True)
@@ -185,3 +195,15 @@ def create_languagedata_xml_file(po_file):
     # Hack - silly lxml cannot write native unicode strings
     xml_file = etree.tostring(xml, pretty_print=True, xml_declaration=True, encoding='utf-8').decode('utf-8')
     return xml_file
+
+def merge_compendium(compendium, po):
+    # If there compendium, fill entries with translation memory
+    for entry in po:
+        if entry.msgstr == '':
+            check_msg = compendium.find(entry.msgctxt, by='msgctxt', include_obsolete_entries=False)
+            if check_msg and check_msg.msgstr:
+                entry.msgstr = check_msg.msgstr
+                if 'fuzzy' not in entry.flags:
+                    entry.flags.append('fuzzy')
+
+    return po
