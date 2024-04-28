@@ -2,6 +2,6 @@
 
 import sys
 sys.path.append('src')
-from Main import Translator
+from translator import Translator
 
 Translator().start()

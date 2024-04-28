@@ -70,7 +70,7 @@ def create_logger(log_level_string):
     logger.addHandler(console)
     return logger
 
-def create_pot_file(category, filename, source_dir, compendium, compendium_mode):
+def create_pot_file(category, filename, source_dir, compendium, compendium_mode=False):
     if category == 'DefInjected':
         return create_pot_file_from_def(filename, source_dir)
     elif category == 'Keyed':
