@@ -1,6 +1,7 @@
 import datetime
 import logging
 from lxml import etree
+import os
 import polib
 import re
 
@@ -51,6 +52,10 @@ def generate_definj_xml_tag(string):
     return string
 
 def create_logger(log_level_string):
+    # TODO: move log into a new log/ folder
+    if os.path.exists('RimTranslate.log'):
+        os.remove('RimTranslate.log')
+
     log_format = '%(levelname)s: %(message)s' 
     log_level = getattr(logging, str.upper(log_level_string))
 
