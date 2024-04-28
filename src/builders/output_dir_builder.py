@@ -3,14 +3,12 @@ import os
 import polib
 
 from ..logger import Logger
+from ..parser import Parser
 
 # TODO: this is also in main file
 version = "0.6.7"
 
 class OutputDirBuilder():
-    def __init__(self, args):
-        self.args = args
-
     def build_output_dir(self):
         Logger.logger.info('Beginning to generate DefInjected files')
         fuzzy = 0
@@ -18,14 +16,14 @@ class OutputDirBuilder():
         translated = 0
         untranslated = 0
 
-        for root, dirs, files in os.walk(self.args.po_dir):
+        for root, dirs, files in os.walk(Parser.args.po_dir):
             for file in files:
                 if file.endswith('.po'):
                     full_filename = os.path.join(root, file)
                     Logger.logger.info("Processing " + full_filename)
-                    xml_filename = full_filename.split(self.args.po_dir, 1)[1]
+                    xml_filename = full_filename.split(Parser.args.po_dir, 1)[1]
                     xml_filename = xml_filename.strip('.po')
-                    xml_filename = os.path.join(self.args.output_dir, xml_filename)
+                    xml_filename = os.path.join(Parser.args.output_dir, xml_filename)
                     directory = os.path.dirname(xml_filename)
 
                     po = polib.pofile(full_filename)

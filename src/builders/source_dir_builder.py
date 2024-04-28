@@ -4,14 +4,13 @@ import polib
 from ..helpers.compendium_helpers import build_compendium, merge_compendium
 from ..helpers.pot_helpers import create_pot_file
 from ..logger import Logger
+from ..parser import Parser
 
 class SourceDirBuilder:
-    def __init__(self, args):
-        self.args = args
-
+    def __init__(self):
         self.compendium = None
-        if self.args.compendium:
-            self.compendium = build_compendium(self.args.compendium, self.args.source_dir)
+        if Parser.args.compendium:
+            self.compendium = build_compendium(Parser.args.compendium, Parser.args.source_dir)
 
     def build_source_dir(self):
         Logger.logger.info('Beginning to generate PO-files')
@@ -22,14 +21,14 @@ class SourceDirBuilder:
     def build_source_dir_defs(self):
         self.build_source_dir_files(
             'DefInjected',
-            os.path.join(self.args.source_dir, 'Defs', '')
+            os.path.join(Parser.args.source_dir, 'Defs', '')
         )
 
     # TODO: private
     def build_source_dir_keyed(self):
         self.build_source_dir_files(
             'Keyed',
-            os.path.join(self.args.source_dir, 'Languages/English/Keyed', '')
+            os.path.join(Parser.args.source_dir, 'Languages/English/Keyed', '')
         )
 
     # TODO: private
@@ -51,8 +50,8 @@ class SourceDirBuilder:
                         # Replace Defs to Def (https://github.com/winterheart/RimTranslate/issues/1)
                         file_dir = file_dir.replace("Defs", "Def")
 
-                    pot = create_pot_file(category_name, full_filename, self.args.source_dir, self.args.compendium)
-                    pofilename = os.path.join(self.args.po_dir, category_name, file_dir)
+                    pot = create_pot_file(category_name, full_filename, Parser.args.source_dir, Parser.args.compendium)
+                    pofilename = os.path.join(Parser.args.po_dir, category_name, file_dir)
                     pofilename += '.po'
 
                     if os.path.exists(pofilename):
@@ -69,7 +68,7 @@ class SourceDirBuilder:
                             Logger.logger.info("Creating PO file " + pofilename)
                         po = pot
 
-                    if self.args.compendium:
+                    if Parser.args.compendium:
                         po = merge_compendium(self.compendium, po)
 
                     if len(po):

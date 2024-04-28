@@ -1,14 +1,14 @@
 #!/usr/bin/python
 from src.builders.source_dir_builder import SourceDirBuilder
 from src.builders.output_dir_builder import OutputDirBuilder
-from src.helpers.parser_helpers import parse_arguments
 from src.logger import Logger
+from src.parser import Parser
 
 
-args = parse_arguments()
-Logger.create_logger(args.v)
+Parser.init()
+Logger.create_logger(Parser.args.v)
 
-if args.source_dir:
-    SourceDirBuilder(args).build_source_dir()
-if args.output_dir:
-    OutputDirBuilder(args).build_output_dir()
+if Parser.args.source_dir:
+    SourceDirBuilder().build_source_dir()
+if Parser.args.output_dir:
+    OutputDirBuilder().build_output_dir()
