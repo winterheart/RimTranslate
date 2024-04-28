@@ -2,7 +2,7 @@ import os
 import polib
 
 from compendium_helpers import build_compendium, merge_compendium
-from helpers import create_pot_file
+from pot_helpers import create_pot_file
 from logger import Logger
 
 class SourceDirBuilder:

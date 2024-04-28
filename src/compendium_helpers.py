@@ -1,7 +1,7 @@
 import os
 import polib
 
-from helpers import create_pot_file
+from pot_helpers import create_pot_file
 from logger import Logger
 
 def build_compendium(compendium_path, source_dir_path):
