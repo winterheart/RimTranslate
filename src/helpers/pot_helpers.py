@@ -3,7 +3,24 @@ from lxml import etree
 import polib
 import re
 
+from ..config.config import pot_metadata
 from ..logger import Logger
+
+# TODO: rename to po_file_metadata
+pot_file_metadata = {
+    'Project-Id-Version': '1.0',
+    'Report-Msgid-Bugs-To': pot_metadata['report_msgid_bugs_to'],
+    'POT-Creation-Date': str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")),
+    'PO-Revision-Date': str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")),
+    'Last-Translator': '%s <%s>' % (pot_metadata['last_translator']['name'], pot_metadata['last_translator']['email']),
+    'Language-Team': '%s <%s>' % (pot_metadata['language_team']['name'], pot_metadata['language_team']['email']),
+    'MIME-Version': '1.0',
+    'Content-Type': 'text/plain; charset=utf-8',
+    'Content-Transfer-Encoding': '8bit',
+}
+
+# TODO: fix logging not working here
+#  Logger.logger.warning(pot_file_metadata)
 
 def create_pot_file(category, filename, source_dir, compendium, compendium_mode=False):
     if category == 'DefInjected':
@@ -23,17 +40,7 @@ def create_pot_file_from_keyed(filename, source_dir, compendium, compendium_mode
         basefile = filename.split(source_dir, 1)[1]
 
     po_file = polib.POFile()
-    po_file.metadata = {
-        'Project-Id-Version': '1.0',
-        'Report-Msgid-Bugs-To': 'you@example.com',
-        'POT-Creation-Date': str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")),
-        'PO-Revision-Date': str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")),
-        'Last-Translator': 'Some Translator <yourname@example.com>',
-        'Language-Team': 'English <yourteam@example.com>',
-        'MIME-Version': '1.0',
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Transfer-Encoding': '8bit',
-    }
+    po_file.metadata = pot_file_metadata
     po_file.metadata_is_fuzzy = 1
     doc = etree.parse(filename, parser)
     for languageData in doc.xpath('//LanguageData'):
@@ -57,17 +64,7 @@ def create_pot_file_from_def(filename, source_dir):
     basefile = filename.split(source_dir, 1)[1]
 
     # TODO: put this in config
-    po_file.metadata = {
-        'Project-Id-Version': '1.0',
-        'Report-Msgid-Bugs-To': 'you@example.com',
-        'POT-Creation-Date': str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")),
-        'PO-Revision-Date': str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")),
-        'Last-Translator': 'Some Translator <yourname@example.com>',
-        'Language-Team': 'English <yourteam@example.com>',
-        'MIME-Version': '1.0',
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Transfer-Encoding': '8bit',
-    }
+    po_file.metadata = pot_file_metadata
     po_file.metadata_is_fuzzy = 1
 
     defNames = [

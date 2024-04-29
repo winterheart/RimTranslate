@@ -6,7 +6,7 @@ from src.parser import Parser
 
 
 Parser.init()
-Logger.create_logger(Parser.args.v)
+Logger.init(Parser.args.v)
 
 if Parser.args.source_dir:
     SourceDirBuilder().build_source_dir()
