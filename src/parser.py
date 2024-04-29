@@ -1,8 +1,7 @@
 import argparse
 import os
 
-# TODO: this is also in main file
-version = "0.6.7"
+from .config.config import version
 
 class Parser:
     parser = None

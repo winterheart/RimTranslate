@@ -2,11 +2,10 @@ from lxml import etree
 import os
 import polib
 
+from ..config.config import version
 from ..logger import Logger
 from ..parser import Parser
 
-# TODO: this is also in main file
-version = "0.6.7"
 
 class OutputDirBuilder():
     def build_output_dir(self):

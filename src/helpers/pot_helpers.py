@@ -6,7 +6,6 @@ import re
 from ..config.config import pot_metadata
 from ..logger import Logger
 
-# TODO: rename to po_file_metadata
 pot_file_metadata = {
     'Project-Id-Version': '1.0',
     'Report-Msgid-Bugs-To': pot_metadata['report_msgid_bugs_to'],
@@ -63,7 +62,6 @@ def create_pot_file_from_def(filename, source_dir):
     po_file = polib.POFile()
     basefile = filename.split(source_dir, 1)[1]
 
-    # TODO: put this in config
     po_file.metadata = pot_file_metadata
     po_file.metadata_is_fuzzy = 1
 

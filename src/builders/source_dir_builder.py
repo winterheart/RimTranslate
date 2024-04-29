@@ -17,21 +17,18 @@ class SourceDirBuilder:
         self.build_source_dir_defs()
         self.build_source_dir_keyed()
 
-    # TODO: private
     def build_source_dir_defs(self):
         self.build_source_dir_files(
             'DefInjected',
             os.path.join(Parser.args.source_dir, 'Defs', '')
         )
 
-    # TODO: private
     def build_source_dir_keyed(self):
         self.build_source_dir_files(
             'Keyed',
             os.path.join(Parser.args.source_dir, 'Languages/English/Keyed', '')
         )
 
-    # TODO: private
     def build_source_dir_files(self, category_name, source_dir):
         Logger.logger.info('Generating PO-files from %s' % category_name)
 
