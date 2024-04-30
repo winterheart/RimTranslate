@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from .config.config import version
+from config.config import version
 
 class Parser:
     parser = None

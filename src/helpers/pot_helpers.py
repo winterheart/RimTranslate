@@ -3,7 +3,7 @@ from lxml import etree
 import polib
 import re
 
-from ..config.config import pot_metadata
+from config.config import pot_metadata
 from ..logger import Logger
 
 pot_file_metadata = {

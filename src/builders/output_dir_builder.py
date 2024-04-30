@@ -2,7 +2,7 @@ from lxml import etree
 import os
 import polib
 
-from ..config.config import version
+from config.config import version
 from ..logger import Logger
 from ..parser import Parser
 
