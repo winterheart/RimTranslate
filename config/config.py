@@ -1,13 +1,13 @@
 pot_metadata = {
     "language_team": {
-        "name": "Ludeon/translators-arabic (https://github.com/orgs/Ludeon/teams/translators-arabic)",
-        "email": "hi@fairewinds.ca"
+        "name": "English",
+        "email": "yourteam@example.com"
     },
     "last_translator": {
-        "name": "Mohamed Moustafa",
-        "email": "hi@fairewinds.ca"
+        "name": "Some Translator",
+        "email": "yourname@example.com"
     },
-    "report_msgid_bugs_to": "hi@fairewinds.ca"
+    "report_msgid_bugs_to": "you@example.com"
 }
 
 version = "0.7.0"
