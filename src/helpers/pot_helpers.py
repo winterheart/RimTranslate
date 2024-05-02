@@ -18,9 +18,6 @@ pot_file_metadata = {
     'Content-Transfer-Encoding': '8bit',
 }
 
-# TODO: fix logging not working here
-#  Logger.logger.warning(pot_file_metadata)
-
 def create_pot_file(category, filename, source_dir, compendium, compendium_mode=False):
     if category == 'DefInjected':
         return create_pot_file_from_def(filename, source_dir)
