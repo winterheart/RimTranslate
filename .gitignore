@@ -1,2 +1,5 @@
-.idea
-RimTranslate.log
+logs/
+po/
+output/
+.tool-versions
+__pycache__/
